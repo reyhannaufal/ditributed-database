@@ -9,11 +9,12 @@ export default function UpdatePage() {
 
   const { id } = router.query;
 
-  const [product, setProduct] = React.useState(null);
+  const [_, setProduct] = React.useState(null);
 
   const [name, setName] = React.useState('');
   const [price, setPrice] = React.useState('');
   const [rating, setRating] = React.useState('');
+  const [imageSrc, setImageSrc] = React.useState('');
 
   useEffect(() => {
     if (id) {
@@ -24,6 +25,7 @@ export default function UpdatePage() {
           setName(data.name);
           setPrice(data.price);
           setRating(data.rating);
+          setImageSrc(data.imageSrc);
         });
     }
   }, [id]);
@@ -31,12 +33,11 @@ export default function UpdatePage() {
   const submitData = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const body = {
-      name: e.target.name.value,
-      price: e.target.price.value,
-      rating: e.target.rating.value,
+      name: name,
+      price: price,
+      rating: rating,
       reviewCount: '5',
-      imageSrc:
-        'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg',
+      imageSrc,
     };
 
     fetch(`/api/product?${id}`, {
@@ -142,10 +143,21 @@ export default function UpdatePage() {
                       name='imageSrc'
                       autoComplete='imageSrc'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      onChange={(e) => setImageSrc(e.target.value)}
+                      value={imageSrc}
                     >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-01.jpg'>
+                        Organize Basic Set (Walnut)
+                      </option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-02.jpg'>
+                        Organize Pen Holder
+                      </option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-03.jpg'>
+                        Organize Sticky Note Holder
+                      </option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg'>
+                        Organize Phone Holder
+                      </option>
                     </select>
                   </div>
                 </div>

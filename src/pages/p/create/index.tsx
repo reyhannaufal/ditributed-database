@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import * as React from 'react';
 
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
@@ -6,15 +7,19 @@ import Seo from '@/components/Seo';
 export default function CreatePage() {
   const router = useRouter();
 
+  const [name, setName] = React.useState('');
+  const [price, setPrice] = React.useState('');
+  const [rating, setRating] = React.useState('');
+  const [imageSrc, setImageSrc] = React.useState('');
+
   const submitData = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const body = {
-      name: e.target.name.value,
-      price: e.target.price.value,
-      rating: e.target.rating.value,
+      name,
+      price,
+      rating,
       reviewCount: '5',
-      imageSrc:
-        'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg',
+      imageSrc,
     };
 
     fetch('/api/product', {
@@ -63,6 +68,8 @@ export default function CreatePage() {
                       name='name'
                       type='text'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </div>
                 </div>
@@ -80,6 +87,8 @@ export default function CreatePage() {
                       name='price'
                       type='text'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
                 </div>
@@ -97,6 +106,8 @@ export default function CreatePage() {
                       name='rating'
                       type='text'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      value={rating}
+                      onChange={(e) => setRating(e.target.value)}
                     />
                   </div>
                 </div>
@@ -114,10 +125,21 @@ export default function CreatePage() {
                       name='imageSrc'
                       autoComplete='imageSrc'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      onChange={(e) => setImageSrc(e.target.value)}
+                      value={imageSrc}
                     >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-01.jpg'>
+                        Organize Basic Set (Walnut)
+                      </option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-02.jpg'>
+                        Organize Pen Holder
+                      </option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-03.jpg'>
+                        Organize Sticky Note Holder
+                      </option>
+                      <option value='https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg'>
+                        Organize Phone Holder
+                      </option>
                     </select>
                   </div>
                 </div>
