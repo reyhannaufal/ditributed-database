@@ -5,7 +5,12 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'POST') {
+  if (req.method === 'GET' && req.query.id) {
+    const result = await prisma.product.findUnique({
+      where: { id: `${req.query.id}` },
+    });
+    res.json(result);
+  } else if (req.method === 'POST') {
     const result = await prisma.product.create({
       data: {
         name: req.body.name,
@@ -23,15 +28,29 @@ export default async function handle(
     });
     res.json(result);
   } else if (req.method === 'PUT') {
-    const result = await prisma.post.update({
-      where: { id: `${req?.body?.id}` },
+    const result = await prisma.product.update({
+      where: { id: `${req?.query?.id}` },
       data: {
-        title: {
-          set: 'Updated title',
-        },
+        name: req.body.name,
+        price: req.body.price,
+        rating: req.body.rating,
+        imageSrc: req.body.imageSrc,
+        reviewCount: req.body.reviewCount,
       },
     });
     res.json(result);
+  } else if (req.method === 'GET') {
+    const products = await prisma.product.findMany();
+
+    const serializedProducts = products.map((product) => {
+      return {
+        ...product,
+        createdAt: product.createdAt.toISOString(),
+        updatedAt: product.updatedAt.toISOString(),
+      };
+    });
+
+    res.json(serializedProducts);
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }

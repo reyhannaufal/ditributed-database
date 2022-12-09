@@ -93,7 +93,7 @@ export default function ProductList({
             Delete
           </button>
           <button
-            onClick={() => router.push(`/p/update/${product.id}`)}
+            onClick={() => router.push(`/p/update/id=${product.id}`)}
             className='rounded-xl border-2 border-yellow-500 p-2 text-sm font-medium text-yellow-500 hover:underline'
           >
             Update

@@ -1,10 +1,32 @@
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import * as React from 'react';
 
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
-
-export default function CreatePage() {
+export default function UpdatePage() {
   const router = useRouter();
+
+  const { id } = router.query;
+
+  const [product, setProduct] = React.useState(null);
+
+  const [name, setName] = React.useState('');
+  const [price, setPrice] = React.useState('');
+  const [rating, setRating] = React.useState('');
+
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/product?${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setProduct(data);
+          setName(data.name);
+          setPrice(data.price);
+          setRating(data.rating);
+        });
+    }
+  }, [id]);
 
   const submitData = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -17,8 +39,8 @@ export default function CreatePage() {
         'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-04.jpg',
     };
 
-    fetch('/api/product', {
-      method: 'POST',
+    fetch(`/api/product?${id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -30,7 +52,7 @@ export default function CreatePage() {
 
   return (
     <Layout>
-      <Seo title='Create Product' />
+      <Seo title='Update Product' />
       <div className='layout flex min-h-screen flex-col items-center justify-center'>
         <form
           className='mt-10 space-y-8 divide-y divide-gray-200'
@@ -40,7 +62,7 @@ export default function CreatePage() {
             <div>
               <div>
                 <h3 className='text-lg font-medium leading-6 text-gray-900'>
-                  Create Product
+                  Update Product
                 </h3>
                 <p className='mt-1 text-sm text-gray-500'>
                   This information will be displayed publicly so be careful what
@@ -63,6 +85,8 @@ export default function CreatePage() {
                       name='name'
                       type='text'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </div>
                 </div>
@@ -80,6 +104,8 @@ export default function CreatePage() {
                       name='price'
                       type='text'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
                     />
                   </div>
                 </div>
@@ -97,6 +123,8 @@ export default function CreatePage() {
                       name='rating'
                       type='text'
                       className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      value={rating}
+                      onChange={(e) => setRating(e.target.value)}
                     />
                   </div>
                 </div>
@@ -131,13 +159,13 @@ export default function CreatePage() {
                 className='rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
                 onClick={() => router.push('/')}
               >
-                Cancel
+                Cancel Update
               </a>
               <button
                 type='submit'
                 className='ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
               >
-                Create
+                Update
               </button>
             </div>
           </div>

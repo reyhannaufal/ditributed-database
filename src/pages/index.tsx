@@ -1,5 +1,3 @@
-import prisma from 'lib/prisma';
-import { InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
@@ -7,10 +5,19 @@ import Layout from '@/components/layout/Layout';
 import ProductList from '@/components/ProductList';
 import Seo from '@/components/Seo';
 
-export default function HomePage({
-  products,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
+export default function HomePage() {
   const router = useRouter();
+
+  const [productsData, setProductsData] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch('/api/product');
+      const data = await res.json();
+      setProductsData(data);
+    };
+    fetchProducts();
+  }, []);
 
   const renderHeader = (
     <div className='py-10'>
@@ -34,28 +41,14 @@ export default function HomePage({
         <section className='bg-white'>
           <div className='layout flex min-h-screen flex-col items-center justify-center text-center'>
             {renderHeader}
-            <ProductList productsData={products} />
+            {productsData && productsData.length !== 0 ? (
+              <ProductList productsData={productsData} />
+            ) : (
+              <p>Data not found</p>
+            )}
           </div>
         </section>
       </main>
     </Layout>
   );
 }
-
-export const getServerSideProps = async () => {
-  const products = await prisma.product.findMany();
-
-  const serializedProducts = products.map((product) => {
-    return {
-      ...product,
-      createdAt: product.createdAt.toISOString(),
-      updatedAt: product.updatedAt.toISOString(),
-    };
-  });
-
-  return {
-    props: {
-      products: serializedProducts,
-    },
-  };
-};
