@@ -21,6 +21,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.13",
     "@prisma/client": "4.7.1",
     "@tanstack/react-query": "^4.19.1",
     "clsx": "^1.2.1",

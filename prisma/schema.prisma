@@ -29,3 +29,15 @@ model User {
   posts         Post[]
   @@map(name: "users")
 }
+
+model Product {
+  id        String     @default(cuid()) @id
+  name      String
+  price     String
+  rating    String
+  reviewCount String
+  imageSrc     String
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
+  @@map(name: "products")
+}

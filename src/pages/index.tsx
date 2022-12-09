@@ -1,79 +1,40 @@
 import prisma from 'lib/prisma';
 import { InferGetStaticPropsType } from 'next';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 
-import Button from '@/components/buttons/Button';
 import Layout from '@/components/layout/Layout';
+import ProductList from '@/components/ProductList';
 import Seo from '@/components/Seo';
 
 export default function HomePage({
-  feeds,
+  products,
 }: InferGetStaticPropsType<typeof getServerSideProps>) {
-  const handleOnClickCreate = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    const body = {
-      title: 'title',
-      content: 'content',
-    };
+  const router = useRouter();
 
-    fetch('/api/feed', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-  };
-
-  const handleOnClickDelete = (id: string) => {
-    fetch('/api/feed', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-    });
-  };
-
-  const handleOnClickUpdate = (id: string) => {
-    fetch('/api/feed', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-    });
-  };
-
+  const renderHeader = (
+    <div className='py-10'>
+      <div className='flex items-center justify-between space-x-10'>
+        <h2 className='text-2xl font-extrabold tracking-tight text-gray-900'>
+          Trending products
+        </h2>
+        <button
+          onClick={() => router.push('/p/create')}
+          className='hidden text-sm font-medium text-indigo-600 hover:text-indigo-500 hover:underline md:block'
+        >
+          Create new product -{'>'}
+        </button>
+      </div>
+    </div>
+  );
   return (
     <Layout>
-      <Seo />
-
+      <Seo title='Product List' />
       <main>
         <section className='bg-white'>
           <div className='layout flex min-h-screen flex-col items-center justify-center text-center'>
-            <div>
-              <h1 className='p-5'>Feed List</h1>
-              <Button onClick={handleOnClickCreate}>Create</Button>
-            </div>
-            {feeds.map((feed) => (
-              <div
-                key={feed.id}
-                className='flex flex-col items-center justify-center p-4'
-              >
-                <p>{feed.author?.name}</p>
-                <p>{feed.title}</p>
-                <p>{feed.content}</p>
-                <div className='mt-4 flex space-x-2'>
-                  <Button onClick={() => handleOnClickDelete(feed.id)}>
-                    Delete
-                  </Button>
-                  <Button onClick={() => handleOnClickUpdate(feed.id)}>
-                    Update
-                  </Button>
-                </div>
-              </div>
-            ))}
+            {renderHeader}
+            <ProductList productsData={products} />
           </div>
         </section>
       </main>
@@ -82,18 +43,19 @@ export default function HomePage({
 }
 
 export const getServerSideProps = async () => {
-  const feeds = await prisma.post.findMany({
-    where: { published: true },
-    include: {
-      author: {
-        select: { name: true },
-      },
-    },
+  const products = await prisma.product.findMany();
+
+  const serializedProducts = products.map((product) => {
+    return {
+      ...product,
+      createdAt: product.createdAt.toISOString(),
+      updatedAt: product.updatedAt.toISOString(),
+    };
   });
 
   return {
     props: {
-      feeds,
+      products: serializedProducts,
     },
   };
 };
