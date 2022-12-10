@@ -1,3 +1,4 @@
 ## System Architecture
 
-<img width="401" alt="Screenshot 2022-12-10 at 9 17 57 PM" src="https://user-images.githubusercontent.com/59334824/206859877-f111c5e3-71b5-4a38-a65a-8fafbdd04bde.png">
+![image](https://user-images.githubusercontent.com/59334824/206860118-67fe01c3-9563-4639-b523-6f384f4c28f5.png)
+
