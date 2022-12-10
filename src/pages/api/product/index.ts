@@ -1,5 +1,7 @@
-import prisma from 'lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
+
+import prisma from '@/lib/prisma';
+import redis from '@/lib/redis';
 
 export default async function handle(
   req: NextApiRequest,
@@ -40,17 +42,28 @@ export default async function handle(
     });
     res.json(result);
   } else if (req.method === 'GET') {
-    const products = await prisma.product.findMany();
+    const prouductRedis = await redis.get('products');
 
-    const serializedProducts = products.map((product) => {
-      return {
-        ...product,
-        createdAt: product.createdAt.toISOString(),
-        updatedAt: product.updatedAt.toISOString(),
-      };
-    });
+    if (prouductRedis) {
+      console.log('🚀 ~ Get redis');
+      return res.json(JSON.parse(prouductRedis));
+    } else {
+      const products = await prisma.product.findMany();
 
-    res.json(serializedProducts);
+      const serializedProducts = products.map((product) => {
+        return {
+          ...product,
+          createdAt: product.createdAt.toISOString(),
+          updatedAt: product.updatedAt.toISOString(),
+        };
+      });
+
+      console.log('🚀 ~ Set redis');
+
+      await redis.set('products', JSON.stringify(serializedProducts));
+
+      res.json(serializedProducts);
+    }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
